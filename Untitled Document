@@ -1,0 +1,76 @@
+set local storage
+if (equips.length > 0) {
+  localStorage.setItem('equip', JSON.stringify(equips));
+} else {
+  localStorage.setItem('equip', '');
+}
+
+localStorage.setItem('productView', JSON.stringify(response));
+  const elements = response.elements;
+  if (elements.length > 0) {
+    localStorage.setItem('productShape', elements[0].ID_SHAPE.toString());
+  } else {
+    localStorage.removeItem('productShape');
+  }
+
+localStorage.setItem('productView', JSON.stringify(response));
+  const elements = response.elements;
+  if (elements.length > 0) {
+    localStorage.setItem('productShape', elements[0].ID_SHAPE.toString());
+  } else {
+    localStorage.removeItem('productShape');
+  }
+
+----------------------------------------------------------------------------
+get local storage 
+
+this.userLogon = JSON.parse(localStorage.getItem('user')); // type json
+Number(localStorage.getItem('productShape')); // type number
+this.checkequip = localStorage.getItem('equip');
+-----------------------------------------------------------------------------
+
+setSession ---- (import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';)
+
+user(): any {
+    return JSON.parse(localStorage.getItem('user'));
+  }
+
+  login(username: string, password: string) {
+    console.log('auth service send login');
+    return this.api.login({ username, password })
+      .do(resp => this.setSession(resp));
+  }
+
+  private setSession(authResponse) {
+    console.log(authResponse.token);
+    // const expiresAt = moment().add(authResponse.expiresIn, 'second');
+    localStorage.setItem('token', authResponse.token);
+    localStorage.setItem('user', JSON.stringify(authResponse.user));
+    // localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
+  }
+
+  logout() {
+    this.api.logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('study');
+    // localStorage.removeItem('expires_at');
+  }
+   public isLoggedIn() {
+    return moment().isBefore(this.getExpiration());
+  }
+
+  isLoggedOut() {
+    return !this.isLoggedIn();
+  }
+
+  getExpiration() {
+    const expiration = localStorage.getItem('expires_at');
+    const expiresAt = JSON.parse(expiration);
+    return moment(expiresAt);
+  }
+
+  getToken() {
+    return localStorage.getItem('token');
+  }
+  --------------------------------------------------------------------------------
